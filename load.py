@@ -1,13 +1,21 @@
 # Reads csv data
 
+# helper libraries
 from pathlib import Path
 from os import getcwd
+
+# data libraries
 import pandas as pd
 import numpy as np
-
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 # objects
 from objects.parameters import COLS
+
+# globals
+data_path = Path( getcwd() , 'data/kraken')
+file_name = 'COMPUSD.csv'
 
 
 # Reads from a csv file
@@ -20,32 +28,30 @@ def read_data( data_path : Path, file_name: str, column_headers: list ):
 
     data = pd.read_csv( Path(data_path, file_name), header=None, names=column_headers )
 
-    # print( data.groupby( 'TIME' )[ 'PRICE' ].value_counts( normalize=True ) )
-    
-    # print( data.groupby( 'PRICE' )[ 'TIME' ].mean() )
+    return data
 
-    # print( data.corr() )
+# Plots an sns scatter plot from the data object
+def plot_scatter( data: pd.DataFrame, x: str, y: str ):
+    '''
+        data: pandas DataFrame being analyzed
+        x: x-axis variable plot
+        y: y-axis variable plot
+    '''
 
-    # data[ 'high_price' ] = data.PRICE.apply(lambda x: x > 200 )
-    # print ( data.corr() )
+    # creates the scatter plot
+    sns.lmplot( x=x, y=y, data=data )
 
-    # print( data.describe( percentiles=[ .05, .1, .5, .9, .95 ] ) )
+    # removes excess chart lines and ticks for a nice looking plot
+    # sns.despine()
 
-    # pivot_table = pd.pivot_table( data, values='PRICE', index=[ 'TIME' ], columns=[ 'TIME' ], aggfunc=np.mean)
-    # print( pivot_table )
-
-    return data.head(), data.describe(), data.info
-
-def group_by( data_path : Path, file_name: str, column_headers: list ):
-
-    data = pd.read_csv( Path(data_path, file_name), header=None, names=column_headers )
+    # shows the scatter plot
+    plt.show()
 
 
 if __name__ == '__main__':
 
-    data_path = Path( getcwd() , 'data/kraken')
-    file_name = 'COMPUSD.csv'
+    data = read_data( data_path=data_path, file_name=file_name, column_headers=COLS.values() )
 
-    head, describe, info = read_data( data_path=data_path, file_name=file_name, column_headers=COLS.values() )
+    plot_scatter( data=data, x='TIME', y='PRICE' )
 
 
